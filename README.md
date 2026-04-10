@@ -318,21 +318,6 @@ The connector layer is intentionally interface-driven so additional providers or
 - Introduce vector or phonetic blocking strategies for higher-scale candidate generation.
 - Add provider catalogs for more asset managers beyond BlackRock.
 
-## Resume-Ready Bullets
-
-- Built an end-to-end sanctions screening analytics platform using Python, PostgreSQL, dbt, Prefect, FastAPI, and Streamlit to ingest, normalize, and screen multi-source public data for fund exposure monitoring.
-- Designed a medallion-style warehouse model spanning raw snapshots, curated entity views, screening evidence tables, and dashboard-ready marts with dbt tests and operational metadata capture.
-- Implemented a configurable entity-resolution engine using normalization, alias expansion, identifier matching, and RapidFuzz similarity scoring to surface explainable high/medium/low confidence candidate matches.
-- Added production-style controls including Alembic migrations, Dockerized PostgreSQL, Pandera data contracts, structured logging, deterministic sample-data fallback, and API/dashboard delivery for portfolio demonstration.
-
-## Interview Talking Points
-
-Use [`docs/interview_talking_points.md`](docs/interview_talking_points.md) for concise project narratives, tradeoff explanations, and likely interviewer follow-up questions.
-
-## Demo Walkthrough
-
-Use [`docs/demo_walkthrough.md`](docs/demo_walkthrough.md) for a 5-7 minute portfolio walkthrough that starts with architecture, then moves through pipeline execution, dashboard exploration, and operational tradeoffs.
-
 ## Demo Results
 
 Representative local demo runs produced the following outputs:
@@ -364,12 +349,3 @@ See [`docs/screenshots.md`](docs/screenshots.md) for the screenshot inventory.
 ## Tradeoffs and Framing
 
 SanctionSight prioritizes explainability, modularity, and local reproducibility. It is intentionally scoped as an analytical prototype for public data screening, not a legal compliance product. Candidate matches are surfaced to support research and monitoring workflows and should always be validated by a human reviewer.
-
-## Suggested Final Packaging
-
-To make the repository fully showcase-ready, the last mile is:
-
-1. Run the project locally in the intended Poetry Python 3.12 environment.
-2. Add one example API response payload to the README.
-3. Add one architecture or data model diagram export beyond the Mermaid block.
-4. Enable the included CI workflow in GitHub so lint and tests run automatically on push.

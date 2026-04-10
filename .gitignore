@@ -21,4 +21,4 @@ data/cache/**
 .streamlit/secrets.toml
 dbt/target/
 dbt/logs/
-
+docs/*.local.md

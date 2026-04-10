@@ -1,0 +1,6 @@
+fund_id,fund_name,share_class,isin,sedol,fund_type,domicile,asset_class,currency,blackrock_url,snapshot_date
+BR-FUND-001,BlackRock Global Energy Opportunities Fund,A,IE00BRGEO001,B1GEO01,ETF,Ireland,Equity,USD,https://www.blackrock.com/products/demo-energy,2026-04-09
+BR-FUND-002,BlackRock Emerging Markets Income Fund,A,IE00BREMK002,B1EMI02,Mutual Fund,Luxembourg,Multi-Asset,USD,https://www.blackrock.com/products/demo-em-income,2026-04-09
+BR-FUND-003,BlackRock Frontier Opportunities Fund,A,IE00BRFRO003,B1FRO03,ETF,Ireland,Equity,USD,https://www.blackrock.com/products/demo-frontier,2026-04-09
+BR-FUND-004,BlackRock Sustainable Infrastructure Fund,A,IE00BRSIF004,B1SIF04,Mutual Fund,Ireland,Infrastructure,EUR,https://www.blackrock.com/products/demo-infra,2026-04-09
+

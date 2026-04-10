@@ -1,0 +1,4 @@
+source_record_id,primary_name,alternate_names,entity_type,program,country,nationality,date_of_birth,place_of_birth,remarks,aliases_json,source_url,source_last_updated,isin,cusip,sedol,ticker
+EU-ENT-001,"ORION PETROCHEMICALS PUBLIC LIMITED COMPANY","['ORION PETROCHEMICALS PLC']",Entity,"EU Chemical Restrictions",Russia,,,,"Synthetic EU example","[""ORION PETROCHEMICALS PLC""]",https://webgate.ec.europa.eu/fsd/fsf/public/files/xmlFullSanctionsList_1_1/content,2026-04-05T00:00:00Z,,,,
+EU-ENT-002,"CASPIAN TRADE DEVELOPMENT SA","['CASPIAN TRADE DEV SA']",Entity,"EU Iran",Iran,,,,"Synthetic EU example","[""CASPIAN TRADE DEV SA""]",https://webgate.ec.europa.eu/fsd/fsf/public/files/xmlFullSanctionsList_1_1/content,2026-04-05T00:00:00Z,,,,
+EU-ENT-003,"BALTIC METALS EXPORT LLC","[]",Entity,"EU Russia",Belarus,,,,"Synthetic EU example","[]",https://webgate.ec.europa.eu/fsd/fsf/public/files/xmlFullSanctionsList_1_1/content,2026-04-05T00:00:00Z,,,,

@@ -1,0 +1,35 @@
+version: 2
+
+sources:
+  - name: app_raw
+    schema: public
+    tables:
+      - name: raw_sanctions_record
+      - name: raw_blackrock_fund_record
+      - name: raw_blackrock_holding_record
+      - name: raw_source_snapshot
+
+models:
+  - name: stg_raw_sanctions_entities
+    columns:
+      - name: sanctions_entity_id
+        tests: [not_null]
+      - name: source_system
+        tests:
+          - accepted_values:
+              values: ["UN", "EU", "OFAC"]
+      - name: primary_name
+        tests: [not_null]
+  - name: stg_raw_blackrock_funds
+    columns:
+      - name: fund_id
+        tests: [not_null, unique]
+      - name: fund_name
+        tests: [not_null]
+  - name: stg_raw_blackrock_holdings
+    columns:
+      - name: holding_id
+        tests: [not_null, unique]
+      - name: issuer_name
+        tests: [not_null]
+

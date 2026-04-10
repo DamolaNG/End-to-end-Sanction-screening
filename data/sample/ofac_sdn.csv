@@ -1,0 +1,4 @@
+source_record_id,primary_name,alternate_names,entity_type,program,country,nationality,date_of_birth,place_of_birth,remarks,aliases_json,source_url,source_last_updated,isin,cusip,sedol,ticker
+OFAC-ENT-001,"ACME DEFENSE TECHNOLOGY LTD","['ACME DEFENSE TECHNOLOGY']",Entity,"OFAC SDN",Russia,,,,"Synthetic OFAC example","[""ACME DEFENSE TECHNOLOGY""]",https://ofac.treasury.gov/,2026-04-06T00:00:00Z,US0000000001,,,ACME
+OFAC-ENT-002,"NOVA SHIP MANAGEMENT LLC","['NOVA SHIPPING LLC']",Entity,"OFAC SDN",Iran,,,,"Synthetic OFAC example","[""NOVA SHIPPING LLC""]",https://ofac.treasury.gov/,2026-04-06T00:00:00Z,,,,NOVA
+OFAC-ENT-003,"ATLAS AEROSPACE TRADING FZE","[]",Entity,"OFAC SDN","United Arab Emirates",,,,"Synthetic OFAC example","[]",https://ofac.treasury.gov/,2026-04-06T00:00:00Z,,,,

@@ -1,0 +1,20 @@
+version: 2
+
+models:
+  - name: mart_screening_overview
+    columns:
+      - name: run_id
+        tests: [not_null, unique]
+  - name: mart_fund_exposure
+    columns:
+      - name: fund_id
+        tests: [not_null]
+  - name: mart_entity_matches
+    columns:
+      - name: match_id
+        tests: [not_null, unique]
+  - name: mart_pipeline_health
+    columns:
+      - name: source_system
+        tests: [not_null]
+

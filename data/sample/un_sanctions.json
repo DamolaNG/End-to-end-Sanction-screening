@@ -1,0 +1,57 @@
+{
+  "source_last_updated": "2026-04-04T00:00:00Z",
+  "records": [
+    {
+      "source_record_id": "UN-ENT-001",
+      "primary_name": "ORION PETROCHEMICALS PLC",
+      "alternate_names": ["ORION PETROCHEMICALS", "ORION PETRO"],
+      "entity_type": "Entity",
+      "program": "UN DPRK",
+      "country": "Russia",
+      "nationality": null,
+      "date_of_birth": null,
+      "place_of_birth": null,
+      "remarks": "Listed for public analytical screening demo purposes.",
+      "aliases_json": ["ORION PETROCHEMICALS", "ORION PETRO"],
+      "source_url": "https://scsanctions.un.org/",
+      "raw_payload": {
+        "list_type": "UN DPRK"
+      }
+    },
+    {
+      "source_record_id": "UN-ENT-002",
+      "primary_name": "NOVA SHIPPING LLC",
+      "alternate_names": ["NOVA SHIP MANAGEMENT", "NOVA SHIPPING"],
+      "entity_type": "Entity",
+      "program": "UN IRAN",
+      "country": "Iran",
+      "nationality": null,
+      "date_of_birth": null,
+      "place_of_birth": null,
+      "remarks": "Synthetic sample entity.",
+      "aliases_json": ["NOVA SHIP MANAGEMENT", "NOVA SHIPPING"],
+      "source_url": "https://scsanctions.un.org/",
+      "raw_payload": {
+        "list_type": "UN IRAN"
+      }
+    },
+    {
+      "source_record_id": "UN-ENT-003",
+      "primary_name": "ALFA INDUSTRIAL GROUP SA",
+      "alternate_names": ["ALFA INDUSTRIES GROUP"],
+      "entity_type": "Entity",
+      "program": "UN SYRIA",
+      "country": "Syria",
+      "nationality": null,
+      "date_of_birth": null,
+      "place_of_birth": null,
+      "remarks": "Synthetic sample entity.",
+      "aliases_json": ["ALFA INDUSTRIES GROUP"],
+      "source_url": "https://scsanctions.un.org/",
+      "raw_payload": {
+        "list_type": "UN SYRIA"
+      }
+    }
+  ]
+}
+

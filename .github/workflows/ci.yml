@@ -1,0 +1,65 @@
+name: ci
+
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: sanctionsight
+          POSTGRES_USER: sanctionsight
+          POSTGRES_PASSWORD: sanctionsight
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U sanctionsight -d sanctionsight"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: sanctionsight
+      POSTGRES_USER: sanctionsight
+      POSTGRES_PASSWORD: sanctionsight
+      DATABASE_URL: postgresql+psycopg://sanctionsight:sanctionsight@localhost:5432/sanctionsight
+      SAMPLE_DATA_MODE: "true"
+      ALLOW_LIVE_FETCH: "false"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Poetry
+        uses: abatilo/actions-poetry@v4
+        with:
+          poetry-version: "1.8.5"
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Run migrations
+        run: poetry run alembic upgrade head
+
+      - name: Lint
+        run: poetry run ruff check .
+
+      - name: Compile
+        run: poetry run python -m compileall app api dashboards orchestration scripts tests
+
+      - name: Run tests
+        run: poetry run pytest -q
+

@@ -1,0 +1,10 @@
+holding_id,fund_id,issuer_name,isin,ticker,cusip,sedol,country,sector,market_value,weight_pct,snapshot_date,source_url
+BR-HOLD-001,BR-FUND-001,ACME DEFENSE TECHNOLOGY LTD,US0000000001,ACME,,,Russia,Industrials,1250000,4.25,2026-04-09,https://www.blackrock.com/products/demo-energy/holdings
+BR-HOLD-002,BR-FUND-001,ORION PETROCHEMICALS PLC,,ORPC,,,Russia,Energy,980000,3.10,2026-04-09,https://www.blackrock.com/products/demo-energy/holdings
+BR-HOLD-003,BR-FUND-002,NOVA SHIP MANAGEMENT LTD,,NOVA,,,Iran,Industrials,760000,2.75,2026-04-09,https://www.blackrock.com/products/demo-em-income/holdings
+BR-HOLD-004,BR-FUND-002,GREEN VALLEY UTILITIES INC,US1111111111,GVU,,,United States,Utilities,1100000,3.95,2026-04-09,https://www.blackrock.com/products/demo-em-income/holdings
+BR-HOLD-005,BR-FUND-003,CASPIAN TRADE DEV SA,,CTD,,,Iran,Financials,450000,1.85,2026-04-09,https://www.blackrock.com/products/demo-frontier/holdings
+BR-HOLD-006,BR-FUND-003,ALPHA INDUSTRIES GROUP PLC,,AIGP,,,Syria,Industrials,390000,1.40,2026-04-09,https://www.blackrock.com/products/demo-frontier/holdings
+BR-HOLD-007,BR-FUND-004,ATLAS AERO TRADING FZC,,AAT,,,United Arab Emirates,Industrials,220000,0.95,2026-04-09,https://www.blackrock.com/products/demo-infra/holdings
+BR-HOLD-008,BR-FUND-004,NORTHERN GRID OPERATORS PLC,GB0000000002,NGOP,,,United Kingdom,Utilities,870000,2.90,2026-04-09,https://www.blackrock.com/products/demo-infra/holdings
+

@@ -156,6 +156,34 @@ def _load_blackrock_holdings_csv(path: Path) -> list[dict[str, Any]]:
     return records
 
 
+def _load_blackrock_funds_csv(path: Path) -> list[dict[str, Any]]:
+    records: list[dict[str, Any]] = []
+    with path.open(newline="", encoding="utf-8") as handle:
+        reader = csv.DictReader(handle)
+        for row in reader:
+            fund_id = _clean_text(row.get("fund_id"))
+            fund_name = _clean_text(row.get("fund_name"))
+            if not fund_id or not fund_name:
+                continue
+            records.append(
+                {
+                    "fund_id": fund_id,
+                    "fund_name": fund_name,
+                    "share_class": _clean_text(row.get("share_class")),
+                    "isin": _clean_text(row.get("isin")),
+                    "sedol": _clean_text(row.get("sedol")),
+                    "fund_type": _clean_text(row.get("fund_type")),
+                    "domicile": _clean_text(row.get("domicile")),
+                    "asset_class": _clean_text(row.get("asset_class")),
+                    "currency": _clean_text(row.get("currency")),
+                    "blackrock_url": _clean_text(row.get("blackrock_url")),
+                    "snapshot_date": _clean_text(row.get("snapshot_date")),
+                    "source_url": _clean_text(row.get("blackrock_url")),
+                }
+            )
+    return records
+
+
 class BlackRockFundConnector(BaseConnector):
     """Connector for BlackRock fund metadata from a local workbook."""
 
@@ -167,13 +195,9 @@ class BlackRockFundConnector(BaseConnector):
         self.source_url = str(self.settings.blackrock_source_file)
 
     def load_sample_records(self) -> tuple[list[dict[str, Any]], datetime | None, dict[str, Any]]:
-        path = self.settings.blackrock_source_file
-        records = _parse_blackrock_funds_xml(path)
-        return (
-            records,
-            None,
-            {"source_file": str(path), "worksheet": "All Funds", "format": "SpreadsheetML XML"},
-        )
+        path = self.settings.sample_data_dir / "blackrock_funds.csv"
+        records = _load_blackrock_funds_csv(path)
+        return records, None, {"sample_path": str(path), "format": "CSV"}
 
     def fetch_live_records(self) -> tuple[list[dict[str, Any]], datetime | None, dict[str, Any]]:
         path = self.settings.blackrock_source_file

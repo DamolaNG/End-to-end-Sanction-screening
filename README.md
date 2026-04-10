@@ -6,7 +6,7 @@ This repository is intentionally framed as a **public-data analytical prototype*
 
 ## Project Origin
 
-I started building SanctionSight as a personal project after encountering this problem space at IMGP and wanting to explore how a modern data platform could support public-data sanctions exposure monitoring end to end. What began as a practical curiosity grew into a portfolio project focused on the parts I find most compelling as a data engineer: multi-source ingestion, warehouse modeling, entity normalization, explainable matching logic, and analytical delivery through APIs and dashboards.
+I began building SanctionSight as a personal project after encountering sanctions exposure monitoring challenges at IMGP and wanting to explore how an end-to-end data platform could support this workflow using public data. I used the project to translate that real-world problem into a production-style analytics and engineering implementation, with a focus on multi-source ingestion, warehouse modeling, entity normalization, explainable matching, and analytical delivery through APIs and dashboards.
 
 ## Why This Project Matters
 

@@ -1,4 +1,9 @@
-from app.services.normalization import canonical_name, expand_aliases, normalize_identifier, normalize_name
+from app.services.normalization import (
+    canonical_name,
+    expand_aliases,
+    normalize_identifier,
+    normalize_name,
+)
 
 
 def test_normalize_name_strips_suffixes_and_punctuation() -> None:

@@ -5,7 +5,6 @@ from __future__ import annotations
 import pandera as pa
 from pandera import Check
 
-
 sanctions_contract = pa.DataFrameSchema(
     {
         "source_record_id": pa.Column(str, nullable=False),

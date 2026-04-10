@@ -1,6 +1,12 @@
 POETRY ?= poetry
-PYTHON ?= $(POETRY) run python
-DBT = $(POETRY) run dbt --project-dir dbt --profiles-dir dbt
+VENV_BIN := $(if $(wildcard .venv/bin/python),.venv/bin,)
+PYTHON ?= $(if $(VENV_BIN),$(VENV_BIN)/python,$(POETRY) run python)
+ALEMBIC ?= $(if $(VENV_BIN),$(VENV_BIN)/alembic,$(POETRY) run alembic)
+DBT = $(if $(VENV_BIN),$(VENV_BIN)/dbt,$(POETRY) run dbt) --project-dir dbt --profiles-dir dbt
+PYTEST ?= $(if $(VENV_BIN),$(VENV_BIN)/pytest,$(POETRY) run pytest)
+RUFF ?= $(if $(VENV_BIN),$(VENV_BIN)/ruff,$(POETRY) run ruff)
+UVICORN ?= $(if $(VENV_BIN),$(VENV_BIN)/uvicorn,$(POETRY) run uvicorn)
+STREAMLIT ?= $(if $(VENV_BIN),$(VENV_BIN)/streamlit,$(POETRY) run streamlit)
 
 .PHONY: install up down migrate pipeline api dashboard test lint format dbt-run dbt-test compile check
 
@@ -14,16 +20,16 @@ down:
 	docker compose down
 
 migrate:
-	$(POETRY) run alembic upgrade head
+	$(ALEMBIC) upgrade head
 
 pipeline:
 	$(PYTHON) -m scripts.run_pipeline
 
 api:
-	$(POETRY) run uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+	$(UVICORN) api.main:app --host 0.0.0.0 --port 8000 --reload
 
 dashboard:
-	$(POETRY) run streamlit run dashboards/streamlit_app/main.py --server.port 8501
+	$(STREAMLIT) run dashboards/streamlit_app/main.py --server.port 8501
 
 dbt-run:
 	$(DBT) run
@@ -32,15 +38,15 @@ dbt-test:
 	$(DBT) test
 
 test:
-	$(POETRY) run pytest -q
+	$(PYTEST) -q
 
 lint:
-	$(POETRY) run ruff check .
+	$(RUFF) check .
 
 compile:
 	$(PYTHON) -m compileall app api dashboards orchestration scripts tests
 
 check:
-	$(POETRY) run ruff check .
+	$(RUFF) check .
 	$(PYTHON) -m compileall app api dashboards orchestration scripts tests
-	$(POETRY) run pytest -q
+	$(PYTEST) -q

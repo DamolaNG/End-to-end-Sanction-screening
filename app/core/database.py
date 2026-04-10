@@ -10,7 +10,6 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from app.core.config import get_settings
 
-
 _ENGINE: Engine | None = None
 _SESSION_FACTORY: sessionmaker[Session] | None = None
 

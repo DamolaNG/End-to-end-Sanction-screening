@@ -92,7 +92,7 @@ class ScreeningRun(Base):
     stale_source_warning_count: Mapped[int] = mapped_column(Integer(), default=0)
     notes: Mapped[str | None] = mapped_column(Text(), nullable=True)
 
-    matches: Mapped[list["ScreeningMatch"]] = relationship(back_populates="run")
+    matches: Mapped[list[ScreeningMatch]] = relationship(back_populates="run")
 
 
 class ScreeningMatch(Base):
@@ -114,8 +114,8 @@ class ScreeningMatch(Base):
     reviewer_notes: Mapped[str | None] = mapped_column(Text(), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
 
-    run: Mapped["ScreeningRun"] = relationship(back_populates="matches")
-    evidence_rows: Mapped[list["ScreeningMatchEvidence"]] = relationship(back_populates="match")
+    run: Mapped[ScreeningRun] = relationship(back_populates="matches")
+    evidence_rows: Mapped[list[ScreeningMatchEvidence]] = relationship(back_populates="match")
 
 
 class ScreeningMatchEvidence(Base):
@@ -130,7 +130,7 @@ class ScreeningMatchEvidence(Base):
     evidence_value: Mapped[str] = mapped_column(Text())
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
 
-    match: Mapped["ScreeningMatch"] = relationship(back_populates="evidence_rows")
+    match: Mapped[ScreeningMatch] = relationship(back_populates="evidence_rows")
 
 
 class DataQualityIssue(Base):

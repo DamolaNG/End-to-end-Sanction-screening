@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
+import csv
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 from xml.etree import ElementTree
 
 from app.connectors.base import BaseConnector
-
 
 SS_NS = {"ss": "urn:schemas-microsoft-com:office:spreadsheet"}
 SS_NAME = "{urn:schemas-microsoft-com:office:spreadsheet}Name"
@@ -116,6 +116,36 @@ def _parse_blackrock_funds_xml(path: Path) -> list[dict[str, Any]]:
     return records
 
 
+def _load_blackrock_holdings_csv(path: Path) -> list[dict[str, Any]]:
+    records: list[dict[str, Any]] = []
+    with path.open(newline="", encoding="utf-8") as handle:
+        reader = csv.DictReader(handle)
+        for row in reader:
+            holding_id = _clean_text(row.get("holding_id"))
+            issuer_name = _clean_text(row.get("issuer_name"))
+            fund_id = _clean_text(row.get("fund_id"))
+            if not holding_id or not issuer_name or not fund_id:
+                continue
+            records.append(
+                {
+                    "holding_id": holding_id,
+                    "fund_id": fund_id,
+                    "issuer_name": issuer_name,
+                    "isin": _clean_text(row.get("isin")),
+                    "ticker": _clean_text(row.get("ticker")),
+                    "cusip": _clean_text(row.get("cusip")),
+                    "sedol": _clean_text(row.get("sedol")),
+                    "country": _clean_text(row.get("country")),
+                    "sector": _clean_text(row.get("sector")),
+                    "market_value": _parse_float(row.get("market_value")),
+                    "weight_pct": _parse_float(row.get("weight_pct")),
+                    "snapshot_date": _clean_text(row.get("snapshot_date")),
+                    "source_url": _clean_text(row.get("source_url")),
+                }
+            )
+    return records
+
+
 class BlackRockFundConnector(BaseConnector):
     """Connector for BlackRock fund metadata from a local workbook."""
 
@@ -148,17 +178,12 @@ class BlackRockHoldingsConnector(BaseConnector):
         self.source_url = str(self.settings.blackrock_source_file)
 
     def load_sample_records(self) -> tuple[list[dict[str, Any]], datetime | None, dict[str, Any]]:
-        path = self.settings.blackrock_source_file
-        return [], None, {
-            "source_file": str(path),
-            "worksheet": "All Funds",
-            "note": "The provided workbook only contains fund metadata and no holdings worksheet.",
-        }
+        path = self.settings.sample_data_dir / "blackrock_holdings.csv"
+        records = _load_blackrock_holdings_csv(path)
+        return records, None, {"sample_path": str(path), "format": "CSV"}
 
     def fetch_live_records(self) -> tuple[list[dict[str, Any]], datetime | None, dict[str, Any]]:
         path = self.settings.blackrock_source_file
-        return [], None, {
-            "source_file": str(path),
-            "worksheet": "All Funds",
-            "note": "The provided workbook only contains fund metadata and no holdings worksheet.",
-        }
+        raise ValueError(
+            f"The workbook at {path} does not provide a holdings dataset that this connector can parse yet."
+        )

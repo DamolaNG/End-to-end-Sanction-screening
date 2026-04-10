@@ -9,12 +9,16 @@ from dataclasses import dataclass
 import pandas as pd
 
 from app.connectors.blackrock import BlackRockFundConnector, BlackRockHoldingsConnector
-from app.connectors.sanctions import EUSanctionsConnector, OFACSanctionsConnector, UNSanctionsConnector
+from app.connectors.sanctions import (
+    EUSanctionsConnector,
+    OFACSanctionsConnector,
+    UNSanctionsConnector,
+)
 from app.core.config import Settings, get_settings
 from app.core.database import get_engine, session_scope
 from app.core.logging import get_logger
-from app.services.matching import ScreeningEngine
 from app.models.tables import ScreeningRun
+from app.services.matching import ScreeningEngine
 from app.services.persistence import (
     create_screening_run,
     ensure_tables,

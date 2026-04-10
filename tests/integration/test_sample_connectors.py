@@ -1,5 +1,9 @@
 from app.connectors.blackrock import BlackRockFundConnector, BlackRockHoldingsConnector
-from app.connectors.sanctions import EUSanctionsConnector, OFACSanctionsConnector, UNSanctionsConnector
+from app.connectors.sanctions import (
+    EUSanctionsConnector,
+    OFACSanctionsConnector,
+    UNSanctionsConnector,
+)
 
 
 def test_sample_connectors_load_records() -> None:

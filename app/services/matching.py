@@ -13,7 +13,6 @@ from rapidfuzz import fuzz
 from app.core.config import Settings, get_settings
 from app.services.normalization import expand_aliases, normalize_identifier, normalize_name
 
-
 IDENTIFIER_FIELDS = ["isin", "cusip", "sedol", "ticker"]
 
 

@@ -9,7 +9,6 @@ from sqlalchemy import text
 
 from app.core.database import session_scope
 
-
 st.set_page_config(page_title="SanctionSight", layout="wide")
 
 

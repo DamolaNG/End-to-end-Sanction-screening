@@ -45,7 +45,9 @@ class QualityChecker:
         issues = self._schema_issues("BLACKROCK", "holding_contract", holding_contract, frame)
         issues.extend(self._duplicate_issue("BLACKROCK", frame, ["holding_id"]))
         if "isin" in frame.columns:
-            malformed_isin = frame["isin"].fillna("").astype(str).str.len().gt(0) & frame["isin"].astype(str).str.len().ne(12)
+            malformed_isin = frame["isin"].fillna("").astype(str).str.len().gt(0) & frame[
+                "isin"
+            ].astype(str).str.len().ne(12)
         else:
             malformed_isin = pd.Series([], dtype=bool)
         if not malformed_isin.empty and malformed_isin.any():
@@ -61,7 +63,9 @@ class QualityChecker:
             )
         return issues
 
-    def stale_source_issue(self, source_system: str, source_last_updated: datetime | None) -> list[QualityIssue]:
+    def stale_source_issue(
+        self, source_system: str, source_last_updated: datetime | None
+    ) -> list[QualityIssue]:
         if source_last_updated is None:
             return []
         threshold = utc_now() - timedelta(hours=self.settings.stale_source_hours)
@@ -79,7 +83,9 @@ class QualityChecker:
         return []
 
     @staticmethod
-    def _schema_issues(source_system: str, check_name: str, contract, frame: pd.DataFrame) -> list[QualityIssue]:
+    def _schema_issues(
+        source_system: str, check_name: str, contract, frame: pd.DataFrame
+    ) -> list[QualityIssue]:
         try:
             contract.validate(frame, lazy=True)
             return []
@@ -95,7 +101,9 @@ class QualityChecker:
             ]
 
     @staticmethod
-    def _duplicate_issue(source_system: str, frame: pd.DataFrame, key_columns: list[str]) -> list[QualityIssue]:
+    def _duplicate_issue(
+        source_system: str, frame: pd.DataFrame, key_columns: list[str]
+    ) -> list[QualityIssue]:
         if any(column not in frame.columns for column in key_columns):
             return []
         duplicates = frame.duplicated(subset=key_columns).sum()

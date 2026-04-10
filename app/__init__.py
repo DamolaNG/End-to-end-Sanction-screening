@@ -1,2 +1,1 @@
 """SanctionSight application package."""
-

@@ -63,15 +63,21 @@ class PipelineRunner:
         holdings_connector = BlackRockHoldingsConnector(self.settings)
 
         with session_scope() as session:
-            run = create_screening_run(session, mode="sample" if self.settings.sample_data_mode else "live")
+            run = create_screening_run(
+                session, mode="sample" if self.settings.sample_data_mode else "live"
+            )
             all_quality_issues = []
 
             for connector in sanctions_connectors:
                 result = connector.run()
                 frame = pd.DataFrame(result.records)
-                all_quality_issues.extend(self.quality_checker.validate_sanctions(result.source_system, frame))
                 all_quality_issues.extend(
-                    self.quality_checker.stale_source_issue(result.source_system, result.source_last_updated)
+                    self.quality_checker.validate_sanctions(result.source_system, frame)
+                )
+                all_quality_issues.extend(
+                    self.quality_checker.stale_source_issue(
+                        result.source_system, result.source_last_updated
+                    )
                 )
                 persist_connector_result(session, result)
 
@@ -102,7 +108,9 @@ class PipelineRunner:
                 holdings_df=holdings_df,
                 sanctions_df=sanctions_df,
             )
-            replace_screening_results(session, latest_run["run_id"], result.matches, result.evidence)
+            replace_screening_results(
+                session, latest_run["run_id"], result.matches, result.evidence
+            )
             run_row = session.get(ScreeningRun, latest_run["run_id"])
             finalize_screening_run(
                 session=session,
@@ -119,7 +127,11 @@ class PipelineRunner:
         if not skip_dbt:
             self._run_dbt("run", select="marts")
 
-        self.logger.info("pipeline_completed", total_matches=len(result.matches), run_id=str(latest_run["run_id"]))
+        self.logger.info(
+            "pipeline_completed",
+            total_matches=len(result.matches),
+            run_id=str(latest_run["run_id"]),
+        )
         return PipelineResult(
             run_id=str(latest_run["run_id"]),
             status="completed",
@@ -149,4 +161,5 @@ class PipelineRunner:
             }
         )
         self.logger.info("running_dbt", command=command, select=select or "all")
-        subprocess.run(args, check=True, env=env)
+        # The command is assembled from fixed dbt arguments and trusted local settings.
+        subprocess.run(args, check=True, env=env)  # noqa: S603

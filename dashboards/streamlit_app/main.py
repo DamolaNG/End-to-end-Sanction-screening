@@ -27,14 +27,24 @@ def main() -> None:
 
     page = st.sidebar.radio(
         "Navigate",
-        ["Overview", "Match Explorer", "Fund Exposure View", "Entity Detail View", "Data Quality & Pipeline Health"],
+        [
+            "Overview",
+            "Match Explorer",
+            "Fund Exposure View",
+            "Entity Detail View",
+            "Data Quality & Pipeline Health",
+        ],
     )
 
     try:
         overview = load_data("select * from mart_screening_overview order by started_at desc")
-        fund_exposure = load_data("select * from mart_fund_exposure order by candidate_match_count desc")
+        fund_exposure = load_data(
+            "select * from mart_fund_exposure order by candidate_match_count desc"
+        )
         entity_matches = load_data("select * from mart_entity_matches order by raw_score desc")
-        pipeline_health = load_data("select * from mart_pipeline_health order by source_system, dataset_name")
+        pipeline_health = load_data(
+            "select * from mart_pipeline_health order by source_system, dataset_name"
+        )
         sanctions_entities = load_data(
             "select * from int_curated_sanctions_entities order by source_system, primary_name"
         )
@@ -43,7 +53,10 @@ def main() -> None:
         return
 
     if overview.empty:
-        st.warning("No screening runs found yet. Run the ingestion and screening pipeline to populate the dashboard.")
+        st.warning(
+            "No screening runs found yet. "
+            "Run the ingestion and screening pipeline to populate the dashboard."
+        )
         return
 
     latest = overview.iloc[0]
@@ -79,32 +92,60 @@ def render_overview(
         trend = overview.copy()
         trend["started_at"] = pd.to_datetime(trend["started_at"])
         st.plotly_chart(
-            px.line(trend, x="started_at", y="candidate_matches_count", markers=True, title="Candidate Matches Over Time"),
+            px.line(
+                trend,
+                x="started_at",
+                y="candidate_matches_count",
+                markers=True,
+                title="Candidate Matches Over Time",
+            ),
             use_container_width=True,
         )
-        sanctions_by_source = sanctions_entities.groupby("source_system").size().reset_index(name="entity_count")
+        sanctions_by_source = (
+            sanctions_entities.groupby("source_system").size().reset_index(name="entity_count")
+        )
         st.plotly_chart(
-            px.bar(sanctions_by_source, x="source_system", y="entity_count", title="Sanctions Records by Source"),
+            px.bar(
+                sanctions_by_source,
+                x="source_system",
+                y="entity_count",
+                title="Sanctions Records by Source",
+            ),
             use_container_width=True,
         )
     with right:
         st.write(f"Latest run timestamp: `{latest['started_at']}`")
         if not entity_matches.empty:
-            score_chart = entity_matches.groupby("confidence_band").size().reset_index(name="match_count")
+            score_chart = (
+                entity_matches.groupby("confidence_band").size().reset_index(name="match_count")
+            )
             st.plotly_chart(
-                px.pie(score_chart, names="confidence_band", values="match_count", title="Match Confidence Bands"),
+                px.pie(
+                    score_chart,
+                    names="confidence_band",
+                    values="match_count",
+                    title="Match Confidence Bands",
+                ),
                 use_container_width=True,
             )
             asset_mix = entity_matches.groupby("fund_name").size().reset_index(name="match_count")
             st.plotly_chart(
-                px.bar(asset_mix.head(10), x="fund_name", y="match_count", title="Top Funds by Candidate Matches"),
+                px.bar(
+                    asset_mix.head(10),
+                    x="fund_name",
+                    y="match_count",
+                    title="Top Funds by Candidate Matches",
+                ),
                 use_container_width=True,
             )
 
 
 def render_match_explorer(entity_matches: pd.DataFrame) -> None:
     confidence = st.selectbox("Confidence Band", ["All", "High", "Medium", "Low"])
-    source = st.selectbox("Sanctions Source", ["All"] + sorted(entity_matches["source_system"].dropna().unique().tolist()))
+    source = st.selectbox(
+        "Sanctions Source",
+        ["All", *sorted(entity_matches["source_system"].dropna().unique().tolist())],
+    )
     search = st.text_input("Search by fund, issuer, or sanctions entity")
 
     filtered = entity_matches.copy()
@@ -157,7 +198,9 @@ def render_entity_detail(sanctions_entities: pd.DataFrame, entity_matches: pd.Da
     entity_name = st.selectbox("Sanctions Entity", sanctions_entities["primary_name"].tolist())
     entity = sanctions_entities[sanctions_entities["primary_name"] == entity_name].iloc[0]
     st.write(entity.to_dict())
-    related_matches = entity_matches[entity_matches["sanctions_entity_id"] == entity["sanctions_entity_id"]]
+    related_matches = entity_matches[
+        entity_matches["sanctions_entity_id"] == entity["sanctions_entity_id"]
+    ]
     st.subheader("Matching Funds and Holdings")
     st.dataframe(related_matches, use_container_width=True, hide_index=True)
 
@@ -165,10 +208,11 @@ def render_entity_detail(sanctions_entities: pd.DataFrame, entity_matches: pd.Da
 def render_pipeline_health(pipeline_health: pd.DataFrame) -> None:
     st.dataframe(pipeline_health, use_container_width=True, hide_index=True)
     if not pipeline_health.empty:
-        freshness = pipeline_health[["source_system", "dataset_name", "ingestion_ts", "source_last_updated", "status"]]
+        freshness = pipeline_health[
+            ["source_system", "dataset_name", "ingestion_ts", "source_last_updated", "status"]
+        ]
         st.dataframe(freshness, use_container_width=True, hide_index=True)
 
 
 if __name__ == "__main__":
     main()
-

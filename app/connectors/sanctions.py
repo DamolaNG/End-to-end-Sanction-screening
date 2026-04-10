@@ -138,10 +138,15 @@ class UNSanctionsConnector(BaseConnector):
     def load_sample_records(self) -> tuple[list[dict[str, Any]], datetime | None, dict[str, Any]]:
         path = self.settings.sample_data_dir / "un_sanctions.json"
         payload = json.loads(path.read_text(encoding="utf-8"))
-        return payload["records"], _parse_datetime(payload["source_last_updated"]), {"sample_path": str(path)}
+        return (
+            payload["records"],
+            _parse_datetime(payload["source_last_updated"]),
+            {"sample_path": str(path)},
+        )
 
     def fetch_live_records(self) -> tuple[list[dict[str, Any]], datetime | None, dict[str, Any]]:
-        root = ElementTree.fromstring(self._download_bytes(self.data_url))
+        # Official sanctions feed parsed directly into normalized records.
+        root = ElementTree.fromstring(self._download_bytes(self.data_url))  # noqa: S314
         records: list[dict[str, Any]] = []
         for node in root.findall(".//INDIVIDUAL") + root.findall(".//ENTITY"):
             reference = node.findtext("DATAID") or node.findtext("REFERENCE_NUMBER") or ""
@@ -176,7 +181,11 @@ class UNSanctionsConnector(BaseConnector):
                     "raw_payload": ElementTree.tostring(node, encoding="unicode"),
                 }
             )
-        return records, None, {"source_url": self.source_url, "data_url": self.data_url, "format": "XML"}
+        return (
+            records,
+            None,
+            {"source_url": self.source_url, "data_url": self.data_url, "format": "XML"},
+        )
 
 
 class EUSanctionsConnector(BaseConnector):
@@ -193,7 +202,8 @@ class EUSanctionsConnector(BaseConnector):
         return records, _parse_datetime("2026-04-05T00:00:00Z"), {"sample_path": str(path)}
 
     def fetch_live_records(self) -> tuple[list[dict[str, Any]], datetime | None, dict[str, Any]]:
-        root = ElementTree.fromstring(self._download_bytes(self.data_url))
+        # Official sanctions feed parsed directly into normalized records.
+        root = ElementTree.fromstring(self._download_bytes(self.data_url))  # noqa: S314
         records: list[dict[str, Any]] = []
         for node in root.findall(".//sanctionEntity"):
             aliases = [
@@ -228,7 +238,11 @@ class EUSanctionsConnector(BaseConnector):
                     "raw_payload": ElementTree.tostring(node, encoding="unicode"),
                 }
             )
-        return records, None, {"source_url": self.source_url, "data_url": self.data_url, "format": "XML"}
+        return (
+            records,
+            None,
+            {"source_url": self.source_url, "data_url": self.data_url, "format": "XML"},
+        )
 
 
 class OFACSanctionsConnector(BaseConnector):
@@ -236,7 +250,9 @@ class OFACSanctionsConnector(BaseConnector):
 
     source_system = "OFAC"
     dataset_name = "sdn"
-    source_url = "https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/SDN.XML"
+    source_url = (
+        "https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/SDN.XML"
+    )
 
     def load_sample_records(self) -> tuple[list[dict[str, Any]], datetime | None, dict[str, Any]]:
         path = self.settings.sample_data_dir / "ofac_sdn.csv"
@@ -244,7 +260,8 @@ class OFACSanctionsConnector(BaseConnector):
         return records, _parse_datetime("2026-04-06T00:00:00Z"), {"sample_path": str(path)}
 
     def fetch_live_records(self) -> tuple[list[dict[str, Any]], datetime | None, dict[str, Any]]:
-        root = ElementTree.fromstring(self._download_bytes(self.source_url))
+        # Official sanctions feed parsed directly into normalized records.
+        root = ElementTree.fromstring(self._download_bytes(self.source_url))  # noqa: S314
         publish_information = _first_child(root, "publishInformation")
         source_last_updated = _parse_datetime(
             _first_non_empty(
@@ -263,12 +280,20 @@ class OFACSanctionsConnector(BaseConnector):
 
             first_name = _text(node, "firstName")
             last_name = _text(node, "lastName")
-            primary_name = " ".join(part for part in [first_name, last_name] if part) or _text(node, "lastName") or ""
+            primary_name = (
+                " ".join(part for part in [first_name, last_name] if part)
+                or _text(node, "lastName")
+                or ""
+            )
             alias_names: list[str] = []
             for aka in _children(_first_child(node, "akaList") or node, "aka"):
                 aka_first = _text(aka, "firstName")
                 aka_last = _text(aka, "lastName")
-                alias = " ".join(part for part in [aka_first, aka_last] if part) or aka_last or aka_first
+                alias = (
+                    " ".join(part for part in [aka_first, aka_last] if part)
+                    or aka_last
+                    or aka_first
+                )
                 if alias:
                     alias_names.append(alias)
 
@@ -276,7 +301,9 @@ class OFACSanctionsConnector(BaseConnector):
             nationalities = _texts(node, ["nationalityList", "nationality", "country"])
             citizenships = _texts(node, ["citizenshipList", "citizenship", "country"])
             countries = _texts(node, ["addressList", "address", "country"])
-            date_of_birth = _first_non_empty(_texts(node, ["dateOfBirthList", "dateOfBirthItem", "dateOfBirth"]))
+            date_of_birth = _first_non_empty(
+                _texts(node, ["dateOfBirthList", "dateOfBirthItem", "dateOfBirth"])
+            )
             place_of_birth = _first_non_empty(
                 [
                     ", ".join(
@@ -288,7 +315,9 @@ class OFACSanctionsConnector(BaseConnector):
                         ]
                         if part
                     )
-                    for place_of_birth_item in _children(_first_child(node, "placeOfBirthList") or node, "placeOfBirthItem")
+                    for place_of_birth_item in _children(
+                        _first_child(node, "placeOfBirthList") or node, "placeOfBirthItem"
+                    )
                 ]
             )
             remarks = _text(node, "remarks")
@@ -325,7 +354,9 @@ class OFACSanctionsConnector(BaseConnector):
                     "place_of_birth": place_of_birth,
                     "remarks": remarks,
                     "aliases_json": alias_names,
-                    "source_last_updated": source_last_updated.isoformat() if source_last_updated else None,
+                    "source_last_updated": source_last_updated.isoformat()
+                    if source_last_updated
+                    else None,
                     "source_url": self.source_url,
                     "isin": isin,
                     "cusip": cusip,

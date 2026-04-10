@@ -19,6 +19,7 @@ def test_normalize_identifier_standardizes_values() -> None:
 
 
 def test_expand_aliases_deduplicates() -> None:
-    aliases = expand_aliases("Acme Defense Technology Ltd", ["ACME DEFENSE TECHNOLOGY", "Acme Defense Technology Ltd"])
+    aliases = expand_aliases(
+        "Acme Defense Technology Ltd", ["ACME DEFENSE TECHNOLOGY", "Acme Defense Technology Ltd"]
+    )
     assert aliases == ["ACME DEFENSE TECHNOLOGY"]
-

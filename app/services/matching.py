@@ -51,7 +51,9 @@ class ScreeningEngine:
                 for field in IDENTIFIER_FIELDS
                 if sanction.get(field)
             }
-            aliases = expand_aliases(sanction.get("primary_name"), self._coerce_aliases(sanction.get("aliases_json")))
+            aliases = expand_aliases(
+                sanction.get("primary_name"), self._coerce_aliases(sanction.get("aliases_json"))
+            )
             sanctions_records.append(
                 {
                     **sanction,
@@ -78,12 +80,17 @@ class ScreeningEngine:
                 alias_hit = holding_name in sanction["name_candidates"]
 
                 token_sort = max(
-                    fuzz.token_sort_ratio(holding_name, candidate) for candidate in sanction["name_candidates"]
+                    fuzz.token_sort_ratio(holding_name, candidate)
+                    for candidate in sanction["name_candidates"]
                 )
                 token_set = max(
-                    fuzz.token_set_ratio(holding_name, candidate) for candidate in sanction["name_candidates"]
+                    fuzz.token_set_ratio(holding_name, candidate)
+                    for candidate in sanction["name_candidates"]
                 )
-                partial = max(fuzz.partial_ratio(holding_name, candidate) for candidate in sanction["name_candidates"])
+                partial = max(
+                    fuzz.partial_ratio(holding_name, candidate)
+                    for candidate in sanction["name_candidates"]
+                )
                 fuzzy_score = round((0.4 * token_set) + (0.35 * token_sort) + (0.25 * partial), 2)
                 raw_score = fuzzy_score
                 match_type = "fuzzy_name"
@@ -98,12 +105,18 @@ class ScreeningEngine:
                     raw_score = max(raw_score, 94.0)
                     match_type = "alias_match"
 
-                if holding.get("country") and sanction.get("country") and holding["country"] == sanction["country"]:
+                if (
+                    holding.get("country")
+                    and sanction.get("country")
+                    and holding["country"] == sanction["country"]
+                ):
                     raw_score = min(100.0, raw_score + 3.0)
                 if sanction.get("entity_type", "").upper() == "INDIVIDUAL":
                     raw_score = max(0.0, raw_score - 12.0)
 
-                confidence = self._confidence_band(raw_score, identifier_hits, exact_name or alias_hit)
+                confidence = self._confidence_band(
+                    raw_score, identifier_hits, exact_name or alias_hit
+                )
                 if confidence is None:
                     continue
 
@@ -165,14 +178,18 @@ class ScreeningEngine:
                             "sanctions_entity_id": sanction["sanctions_entity_id"],
                             "evidence_type": "match",
                             "evidence_key": "identifier_hits",
-                            "evidence_value": ",".join(identifier_hits) if identifier_hits else "none",
+                            "evidence_value": ",".join(identifier_hits)
+                            if identifier_hits
+                            else "none",
                         },
                     ]
                 )
 
         matches_df = pd.DataFrame(match_rows)
         if not matches_df.empty:
-            matches_df = matches_df.sort_values(["raw_score", "confidence_band"], ascending=[False, True])
+            matches_df = matches_df.sort_values(
+                ["raw_score", "confidence_band"], ascending=[False, True]
+            )
         return MatchResultBundle(matches=matches_df, evidence=pd.DataFrame(evidence_rows))
 
     @staticmethod
@@ -193,7 +210,9 @@ class ScreeningEngine:
     def _confidence_band(
         self, raw_score: float, identifier_hits: list[str], strong_name_support: bool
     ) -> str | None:
-        if identifier_hits or (strong_name_support and raw_score >= self.settings.match_high_threshold):
+        if identifier_hits or (
+            strong_name_support and raw_score >= self.settings.match_high_threshold
+        ):
             return "High"
         if raw_score >= self.settings.match_medium_threshold:
             return "Medium"

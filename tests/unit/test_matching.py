@@ -54,7 +54,14 @@ def test_fuzzy_match_returns_medium_or_low() -> None:
     engine = ScreeningEngine()
     funds = pd.DataFrame([{"fund_id": "F1", "fund_name": "Demo Fund"}])
     holdings = pd.DataFrame(
-        [{"holding_id": "H1", "fund_id": "F1", "issuer_name": "Caspian Trade Dev SA", "country": "Iran"}]
+        [
+            {
+                "holding_id": "H1",
+                "fund_id": "F1",
+                "issuer_name": "Caspian Trade Dev SA",
+                "country": "Iran",
+            }
+        ]
     )
     sanctions = pd.DataFrame(
         [

@@ -70,7 +70,9 @@ class BaseConnector(ABC):
 
         timestamp = utc_now()
         snapshot_dir = self.settings.raw_data_dir / self.source_system
-        snapshot_path = snapshot_dir / f"{self.dataset_name}_{timestamp.strftime('%Y%m%dT%H%M%SZ')}.json"
+        snapshot_path = (
+            snapshot_dir / f"{self.dataset_name}_{timestamp.strftime('%Y%m%dT%H%M%SZ')}.json"
+        )
         file_hash = write_json_snapshot(snapshot_path, records)
         result = ConnectorResult(
             source_system=self.source_system,
@@ -95,7 +97,9 @@ class BaseConnector(ABC):
         )
         return result
 
-    @retry(wait=wait_exponential(multiplier=1, min=1, max=8), stop=stop_after_attempt(3), reraise=True)
+    @retry(
+        wait=wait_exponential(multiplier=1, min=1, max=8), stop=stop_after_attempt(3), reraise=True
+    )
     def _download_text(self, url: str, timeout: float = 30.0) -> str:
         with httpx.Client(
             timeout=timeout,
@@ -106,7 +110,9 @@ class BaseConnector(ABC):
             response.raise_for_status()
             return response.text
 
-    @retry(wait=wait_exponential(multiplier=1, min=1, max=8), stop=stop_after_attempt(3), reraise=True)
+    @retry(
+        wait=wait_exponential(multiplier=1, min=1, max=8), stop=stop_after_attempt(3), reraise=True
+    )
     def _download_bytes(self, url: str, timeout: float = 30.0) -> bytes:
         with httpx.Client(
             timeout=timeout,

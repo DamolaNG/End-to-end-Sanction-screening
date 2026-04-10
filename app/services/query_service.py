@@ -26,4 +26,3 @@ def latest_run_summary(session: Session) -> dict:
         """,
     )
     return frame.iloc[0].to_dict() if not frame.empty else {}
-

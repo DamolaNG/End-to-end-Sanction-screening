@@ -18,4 +18,3 @@ def test_sample_connectors_load_records() -> None:
         result = connector.run()
         assert result.row_count > 0
         assert result.file_hash
-

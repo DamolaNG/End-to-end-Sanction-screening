@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     match_medium_threshold: int = Field(default=84, alias="MATCH_MEDIUM_THRESHOLD")
     match_low_threshold: int = Field(default=72, alias="MATCH_LOW_THRESHOLD")
     stale_source_hours: int = Field(default=72, alias="STALE_SOURCE_HOURS")
-    api_host: str = Field(default="0.0.0.0", alias="API_HOST")
+    api_host: str = Field(default="0.0.0.0", alias="API_HOST")  # noqa: S104
     api_port: int = Field(default=8000, alias="API_PORT")
     streamlit_port: int = Field(default=8501, alias="STREAMLIT_PORT")
 

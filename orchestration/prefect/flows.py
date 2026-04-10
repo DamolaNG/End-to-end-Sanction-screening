@@ -21,4 +21,3 @@ def sanctionsight_flow(skip_dbt: bool = False) -> dict[str, str | int]:
 
 if __name__ == "__main__":
     sanctionsight_flow()
-

@@ -96,7 +96,9 @@ def persist_connector_result(session: Session, result: ConnectorResult) -> RawSo
             [
                 RawBlackrockHoldingRecord(
                     snapshot_id=snapshot.snapshot_id,
-                    source_record_id=str(record.get("holding_id") or record.get("issuer_name") or ""),
+                    source_record_id=str(
+                        record.get("holding_id") or record.get("issuer_name") or ""
+                    ),
                     source_url=record.get("source_url") or result.source_url,
                     raw_payload=_json_safe(record),
                     ingested_at=ingested_at,
@@ -130,12 +132,22 @@ def finalize_screening_run(
     run.finished_at = utc_now()
     run.status = "completed"
     run.total_funds_screened = int(funds_df["fund_id"].nunique()) if not funds_df.empty else 0
-    run.total_holdings_screened = int(holdings_df["holding_id"].nunique()) if not holdings_df.empty else 0
-    run.total_sanctions_entities = int(sanctions_df["sanctions_entity_id"].nunique()) if not sanctions_df.empty else 0
+    run.total_holdings_screened = (
+        int(holdings_df["holding_id"].nunique()) if not holdings_df.empty else 0
+    )
+    run.total_sanctions_entities = (
+        int(sanctions_df["sanctions_entity_id"].nunique()) if not sanctions_df.empty else 0
+    )
     run.candidate_matches_count = int(len(matches_df))
-    run.high_match_count = int((matches_df["confidence_band"] == "High").sum()) if not matches_df.empty else 0
-    run.medium_match_count = int((matches_df["confidence_band"] == "Medium").sum()) if not matches_df.empty else 0
-    run.low_match_count = int((matches_df["confidence_band"] == "Low").sum()) if not matches_df.empty else 0
+    run.high_match_count = (
+        int((matches_df["confidence_band"] == "High").sum()) if not matches_df.empty else 0
+    )
+    run.medium_match_count = (
+        int((matches_df["confidence_band"] == "Medium").sum()) if not matches_df.empty else 0
+    )
+    run.low_match_count = (
+        int((matches_df["confidence_band"] == "Low").sum()) if not matches_df.empty else 0
+    )
     run.stale_source_warning_count = stale_source_warning_count
     return run
 
@@ -191,7 +203,9 @@ def replace_screening_results(
     session.bulk_save_objects(evidence_objects)
 
 
-def persist_quality_issues(session: Session, run_id: UUID | None, issues: list[QualityIssue]) -> None:
+def persist_quality_issues(
+    session: Session, run_id: UUID | None, issues: list[QualityIssue]
+) -> None:
     """Persist data quality issues."""
 
     if not issues:

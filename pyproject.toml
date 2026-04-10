@@ -66,6 +66,9 @@ target-version = "py312"
 select = ["E", "F", "I", "B", "UP", "N", "S", "RUF"]
 ignore = ["B008", "S608"]
 
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101"]
+
 [tool.mypy]
 python_version = "3.12"
 warn_unused_configs = true

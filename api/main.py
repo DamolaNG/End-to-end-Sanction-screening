@@ -15,7 +15,10 @@ from app.core.database import get_db_session
 
 app = FastAPI(
     title="SanctionSight API",
-    description="Internal API for a public-data analytical prototype. Candidate matches require human review.",
+    description=(
+        "Internal API for a public-data analytical prototype. "
+        "Candidate matches require human review."
+    ),
     version="0.1.0",
 )
 
@@ -57,7 +60,14 @@ def metrics_summary(db: DbSession) -> dict:
     freshness = _rows(
         db,
         """
-        select source_system, dataset_name, ingestion_ts, source_last_updated, row_count, severity, status
+        select
+            source_system,
+            dataset_name,
+            ingestion_ts,
+            source_last_updated,
+            row_count,
+            severity,
+            status
         from mart_pipeline_health
         order by source_system, dataset_name
         """,
@@ -95,7 +105,9 @@ def funds(
 
 @app.get("/funds/{fund_id}")
 def fund_detail(fund_id: str, db: DbSession) -> dict:
-    fund_rows = _rows(db, "select * from int_curated_funds where fund_id = :fund_id", {"fund_id": fund_id})
+    fund_rows = _rows(
+        db, "select * from int_curated_funds where fund_id = :fund_id", {"fund_id": fund_id}
+    )
     if not fund_rows:
         raise HTTPException(status_code=404, detail="Fund not found.")
     matches = _rows(
@@ -185,7 +197,11 @@ def sanctions_entities(
     limit :limit
     """
     pattern = f"%{search}%" if search else None
-    return _rows(db, sql, {"source_system": source_system, "search": search, "pattern": pattern, "limit": limit})
+    return _rows(
+        db,
+        sql,
+        {"source_system": source_system, "search": search, "pattern": pattern, "limit": limit},
+    )
 
 
 @app.get("/entities/holdings")
@@ -204,7 +220,9 @@ def holdings_entities(
     limit :limit
     """
     pattern = f"%{search}%" if search else None
-    return _rows(db, sql, {"fund_id": fund_id, "search": search, "pattern": pattern, "limit": limit})
+    return _rows(
+        db, sql, {"fund_id": fund_id, "search": search, "pattern": pattern, "limit": limit}
+    )
 
 
 def run() -> None:
@@ -216,4 +234,3 @@ def run() -> None:
 
 if __name__ == "__main__":
     run()
-

@@ -17,7 +17,8 @@ SS_MERGE_ACROSS = "{urn:schemas-microsoft-com:office:spreadsheet}MergeAcross"
 
 
 def _read_spreadsheetml_worksheet(path: Path, worksheet_name: str) -> list[list[str | None]]:
-    root = ElementTree.parse(path).getroot()
+    # This workbook comes from a user-supplied local file path rather than arbitrary XML input.
+    root = ElementTree.parse(path).getroot()  # noqa: S314
     worksheet = None
     for candidate in root.findall("ss:Worksheet", SS_NS):
         if candidate.attrib.get(SS_NAME) == worksheet_name:
@@ -25,7 +26,9 @@ def _read_spreadsheetml_worksheet(path: Path, worksheet_name: str) -> list[list[
             break
     if worksheet is None:
         available = [node.attrib.get(SS_NAME, "") for node in root.findall("ss:Worksheet", SS_NS)]
-        raise ValueError(f"Worksheet '{worksheet_name}' not found in {path.name}. Available sheets: {available}")
+        raise ValueError(
+            f"Worksheet '{worksheet_name}' not found in {path.name}. Available sheets: {available}"
+        )
 
     table = worksheet.find("ss:Table", SS_NS)
     if table is None:
@@ -43,7 +46,9 @@ def _read_spreadsheetml_worksheet(path: Path, worksheet_name: str) -> list[list[
                     current.append(None)
                     current_index += 1
             data = cell.find("ss:Data", SS_NS)
-            current.append(data.text.strip() if data is not None and data.text is not None else None)
+            current.append(
+                data.text.strip() if data is not None and data.text is not None else None
+            )
             current_index += 1
             merge_across = cell.attrib.get(SS_MERGE_ACROSS)
             if merge_across:
@@ -82,14 +87,18 @@ def _parse_blackrock_funds_xml(path: Path) -> list[dict[str, Any]]:
     records: list[dict[str, Any]] = []
     for row in rows[2:]:
         padded = row + [None] * (len(header) - len(row))
-        values = {str(header[idx]).strip(): padded[idx] for idx in range(len(header)) if header[idx]}
+        values = {
+            str(header[idx]).strip(): padded[idx] for idx in range(len(header)) if header[idx]
+        }
         fund_name = _clean_text(values.get("Name"))
         if not fund_name:
             continue
         snapshot_date = _clean_text(values.get("As of"))
         records.append(
             {
-                "fund_id": _clean_text(values.get("ISIN")) or _clean_text(values.get("SEDOL")) or fund_name,
+                "fund_id": _clean_text(values.get("ISIN"))
+                or _clean_text(values.get("SEDOL"))
+                or fund_name,
                 "fund_name": fund_name,
                 "share_class": _clean_text(values.get("Share Class")),
                 "isin": _clean_text(values.get("ISIN")),
@@ -97,7 +106,8 @@ def _parse_blackrock_funds_xml(path: Path) -> list[dict[str, Any]]:
                 "fund_type": "Fund",
                 "domicile": "United Kingdom",
                 "asset_class": _clean_text(values.get("Asset Class")),
-                "currency": _clean_text(values.get("Share Class Currency")) or _clean_text(values.get("Base Currency")),
+                "currency": _clean_text(values.get("Share Class Currency"))
+                or _clean_text(values.get("Base Currency")),
                 "blackrock_url": None,
                 "snapshot_date": snapshot_date,
                 "ticker": _clean_text(values.get("Ticker")),
@@ -159,12 +169,20 @@ class BlackRockFundConnector(BaseConnector):
     def load_sample_records(self) -> tuple[list[dict[str, Any]], datetime | None, dict[str, Any]]:
         path = self.settings.blackrock_source_file
         records = _parse_blackrock_funds_xml(path)
-        return records, None, {"source_file": str(path), "worksheet": "All Funds", "format": "SpreadsheetML XML"}
+        return (
+            records,
+            None,
+            {"source_file": str(path), "worksheet": "All Funds", "format": "SpreadsheetML XML"},
+        )
 
     def fetch_live_records(self) -> tuple[list[dict[str, Any]], datetime | None, dict[str, Any]]:
         path = self.settings.blackrock_source_file
         records = _parse_blackrock_funds_xml(path)
-        return records, None, {"source_file": str(path), "worksheet": "All Funds", "format": "SpreadsheetML XML"}
+        return (
+            records,
+            None,
+            {"source_file": str(path), "worksheet": "All Funds", "format": "SpreadsheetML XML"},
+        )
 
 
 class BlackRockHoldingsConnector(BaseConnector):
@@ -185,5 +203,6 @@ class BlackRockHoldingsConnector(BaseConnector):
     def fetch_live_records(self) -> tuple[list[dict[str, Any]], datetime | None, dict[str, Any]]:
         path = self.settings.blackrock_source_file
         raise ValueError(
-            f"The workbook at {path} does not provide a holdings dataset that this connector can parse yet."
+            "The workbook at "
+            f"{path} does not provide a holdings dataset that this connector can parse yet."
         )

@@ -90,4 +90,3 @@ def expand_aliases(primary_name: str | None, aliases: Iterable[str] | None) -> l
         if alias_value:
             values.add(alias_value)
     return sorted(value for value in values if value)
-
